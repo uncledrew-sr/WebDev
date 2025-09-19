@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message</title>
+</head>
+<body>
+    <div id="intro-message">로딩 중...</div>
+    <script>
+        const myName = "범규";
+        const myBirth = "2001";
+        const hometown = "제주";
+        const univ = "제주대학교";
+        const major = "cs";
+        const job = "소프트웨어 엔지니어";
+
+        function myIntro() {
+            return `안녕 내 이름은 ${myName}야. ${myBirth}생이고 고향은 ${hometown}야.`;
+        }
+
+        function mySchool() {
+            return `나는 ${univ}에서 ${major}를 공부하고 있어.`;
+        }
+
+        function myDream() {
+            return `유능한 ${job}가 되어 높은 수입을 얻고 싶은데 창업도 해보고 싶어.`;
+        }
+
+        const intros = [myIntro, mySchool, myDream];
+        let currentIndex = 0;
+        let messageElement;
+
+        function updateIntro() {
+            const message = intros[currentIndex]();
+            messageElement.innerText = message;
+            currentIndex = (currentIndex + 1) % intros.length;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            messageElement = document.getElementById('intro-message');
+            updateIntro();
+            setInterval(updateIntro, 2000);
+        });
+    </script>
+</body>
+</html>
