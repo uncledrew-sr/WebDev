@@ -15,7 +15,7 @@ transactions.push({ scoops: ["Raspberry", "StrawBerry"], total: 2 })
 transactions.push({ scoops: ["Vanilla", "Vanilla"], total: 4 })
 // 수익 계산
 const total = transactions.reduce((acc, curr) => acc + curr.total, 0);
-console.log(`You've made ${total} $ today`); // You've made 11.5 $ toda
+console.log(`You've made ${total} $ today`); // You've made 11.5 $ today
 
 // 각 맛의 판매량
 let flavorDistribution = transactions.reduce((acc, curr) => {
@@ -34,11 +34,8 @@ const soldFlavors = Object.keys(flavorDistribution); // Object.keys() 메서드�
 console.log(soldFlavors);
 // reduce()를 사용하여 가장 높은 판매량을 가진 맛 찾기
 const mostPopularFlavor = soldFlavors.reduce((bestFlavor, currentFlavor) => {
-    // bestFlavor와 currentFlavor는 '맛 이름'(문자열)
-    // flavorDistribution에서 해당 맛의 판매량을 가져와 비교
     const bestCount = flavorDistribution[bestFlavor];
     const currentCount = flavorDistribution[currentFlavor];
-    // 현재 맛의 판매량이 더 높으면 currentFlavor를 반환
     if (currentCount > bestCount) {
         return currentFlavor;
     } else {
