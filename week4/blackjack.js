@@ -8,9 +8,9 @@
 - 딜러는 17점 이상이 될 때까지 카드를 받아야 함
 - 플레이어와 딜러의 점수가 같으면 무승부
 */
-let cardOne = 8;
-let cardTwo = 4;
-let cardThree = 7;
+let cardOne = 10;
+let cardTwo = 10;
+let cardThree = 1;
 let sum = cardOne + cardTwo + cardThree;
 
 let cardOneBank = 9;
