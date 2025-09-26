@@ -251,7 +251,7 @@ let sales = [{
     }
 ]
 let sum = 0;
-for( let i =0; i< sales.length; i++) {
+for( let i = 0; i < sales.length; i++) {
     sum += sales[i].amount;
 } // for 문을 사용하여 합산
 sales.reduce((acc, curr) => acc + curr.amount, 0); // reduce() 메서드 사용하여 합산
