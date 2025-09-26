@@ -17,7 +17,7 @@ transactions.push({ scoops: ["Vanilla", "Vanilla"], total: 4 })
 const total = transactions.reduce((acc, curr) => acc + curr.total, 0);
 console.log(`You've made ${total} $ today`); // You've made 11.5 $ today
 
-// 각 맛의 판매량
+// 각 아이스크림 맛의 판매량
 let flavorDistribution = transactions.reduce((acc, curr) => {
 curr.scoops.forEach(scoop => {
     if (!acc[scoop]) {
