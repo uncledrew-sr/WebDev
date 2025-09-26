@@ -6,7 +6,7 @@
     <title>Message</title>
 </head>
 <body>
-    <div id="intro-message">로딩 중...</div>
+    <div id="message">로딩 중...</div>
     <script>
         const myName = "범규";
         const myBirth = "2001";
@@ -38,7 +38,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            messageElement = document.getElementById('intro-message');
+            messageElement = document.getElementById('message');
             updateIntro();
             setInterval(updateIntro, 2000);
         });
