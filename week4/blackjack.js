@@ -12,49 +12,47 @@
 function getRandomIntInclusive(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
-    // Math.random()은 0 (포함)부터 1 (미포함) 사이의 실수를 반환합니다.
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// 플레이어 카드 점수 (기존 값 유지)
+// 플레이어 카드 점수 (값 고정))
 let cardOne = 7;
 let cardTwo = 8;
 let cardThree = 2;
 let sum = cardOne + cardTwo + cardThree;
 
-// 딜러 카드 점수 (랜덤으로 생성)
-// 2부터 11 사이의 정수 난수를 가정
-// 실제 블랙잭 규칙(카드를 뽑는 과정)을 완전히 구현한 것은 아니며, 랜덤 숫자를 적용하는 예시입니다.
-let cardOneBank = getRandomIntInclusive(2, 11); 
+// 딜러 카드 점수 (랜덤 생성)
+let cardOneBank = getRandomIntInclusive(2, 11); // 2부터 11 사이의 정수 난수를 가정
 let cardTwoBank = getRandomIntInclusive(2, 11);
-// 딜러는 17점 이상이 될 때까지 카드를 받아야 하므로, 
-// 여기서는 두 장의 카드가 17 미만일 경우 한 장을 더 받도록 가정합니다.
+/* 딜러는 17점 이상이 될 때까지 카드를 받아야 하므로, 
+여기서는 두 장의 카드가 17 미만일 경우 한 장을 더 받도록 가정 */
 let initialBankSum = cardOneBank + cardTwoBank;
 let cardThreeBank = 0; 
 
 // 딜러는 17점 이상이 될 때까지 카드를 받아야 함 (간단한 구현)
 if (initialBankSum < 17) {
     cardThreeBank = getRandomIntInclusive(2, 11);
+    // 두 장의 카드 합이 17점 미만이면 세번째 카드 받기
 }
 let bankSum = initialBankSum + cardThreeBank;
 
-console.log(`플레이어 최종 점수: ${sum}`);
-console.log(`딜러 카드 1: ${cardOneBank}, 딜러 카드 2: ${cardTwoBank}` + (cardThreeBank > 0 ? `, 딜러 카드 3: ${cardThreeBank}` : ''));
-console.log(`딜러 최종 점수: ${bankSum}`);
+console.log(`플레이어 최종 점수 : ${sum}`);
+console.log(`딜러 카드 1 : ${cardOneBank}, 딜러 카드 2 : ${cardTwoBank}` + (cardThreeBank > 0 ? `, 딜러 카드 3: ${cardThreeBank}` : ''));
+console.log(`딜러 최종 점수 : ${bankSum}`);
 
 // Bust : 21 초과
-if (sum > 21) {
+if (sum > 21) { // 플레이어 카드 합이 21 초과(Bust)
     console.log('딜러 승리(플레이어 Bust)');
 }
-else if (bankSum > 21) {
+else if (bankSum > 21) { // 딜러 카드 합이 21 초과(Bust)
     console.log('플레이어 승리(딜러 Bust)');
 }
 // 플레이어가 Bust 하지 않았고, 딜러도 Bust 하지 않은 경우
 else {
     if (sum === 21 && bankSum !== 21) {
-        console.log('플레이어 승리(Blackjack)');
+        console.log('플레이어 Blackjack');
     } else if (bankSum === 21 && sum !== 21) {
-        console.log('딜러 승리(Blackjack)');
+        console.log('딜러 Blackjack');
     } else if (sum > bankSum) {
         console.log('플레이어 승리');
     } else if (sum < bankSum) {
