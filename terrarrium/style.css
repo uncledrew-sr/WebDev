@@ -1,105 +1,107 @@
-body {
+body{
     font-family: helvetica, arial, sans-serif;
     margin: 0;
-    overflow-x: hidden;
+    overflow-x: hidden; /* 가로 스크롤 방지 */
     min-height: 100vh;
+    position: relative; /* 식물(absolute)의 기준점 */
 }
-h1 {
-    color: black;
-    text-align: center;
-    padding-top: 10px;
-    margin-bottom: 10px;
-    font-size: 2em;
-    position: relative;
-    z-index: 10;
-}
-div {
-    box-sizing: border-box;
+div{
+    box-sizing: border-box; 
     padding: 0;
     border: none;
     margin: 0;
 }
+h1{
+    color: black;
+    text-align: center;
+    padding-top: 20px;
+    margin-bottom: 30px;
+    font-size: 2em;
+}
 .container {
-    background-color: #eee;
-    width: 15%;
+    background-color: #EEEEEE;
+    width: 15%; /* 고정 너비 */
     top: 0;
-    position: fixed;
-    height: 100vh;
-    padding: 10px 10px;
-    overflow-y: auto;
+    position: fixed; /* 뷰포트에 고정 (absolute 대신 fixed 사용) */
+    height: 100vh; /* 뷰포트 전체 높이 사용 */
+    padding: 10px;
+    overflow-y: auto; /* 내용 초과 시 스크롤 허용 */
     z-index: 5;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 15px;
-    align-content: flex-start;
+    /* Flex/Grid는 HTML 요소에 따라 추가 필요 */
 }
 #left-container {
     left: 0;
 }
 #right-container {
-    right: 0;
+    right: 0; /* 오른쪽 끝에 고정 */
+    left: auto; /* 불필요한 left: 0 제거 */
 }
 .plant-holder {
-    height: 100px; 
+    height: 100px; /* 고정된 높이 */
     border: 1px dashed #ccc;
-    /* display: flex; */
+    display: flex;
     justify-content: center;
     align-items: center;
-    position: relative;
+    position: relative; 
+    left: 0; /* 기존 left: -10px 제거 */
+    margin-bottom: 10px; /* 간격 추가 */
 }
 .plant {
-    position: relative;
-    max-width: 100%;
-    max-height: 100%;
+    /* HTML에서 식물을 사이드바 밖으로 옮겨야 드래그가 정상 작동 */
+    position: absolute; 
+    width: 100px;
+    height: auto;
     z-index: 2;
 }
 #terrarium {
     width: 600px; 
     height: 700px;
-    margin: 50px auto; 
+    margin: 50px auto;
     position: relative;
+    z-index: 2; 
 }
 .jar-walls {
-    height: 85%;
-    width: 70%;
+    height: 80%; 
+    width: 60%; 
     background: #d1e1df;
-    border-radius: 2rem; 
+    border-radius: 1rem; 
     position: absolute;
     bottom: 0.5%;
-    left: 15%;
+    left: 20%; 
     opacity: 0.5;
     z-index: 1;
     overflow: hidden; 
 }
 .jar-top {
-    width: 60%;
-    height: 2.5%;
+    width: 50%; 
+    height: 5%; 
     background: #d1e1df;
     position: absolute;
-    bottom: 85.5%;
-    left: 20%;
+    bottom: 80.5%; 
+    left: 25%; 
     opacity: 0.7;
     z-index: 1;
 }
 .jar-bottom {
-    width: 75%;
+    width: 50%; 
     height: 1%;
     background: #d1e1df;
-    border-radius: 0 0 2rem 2rem; 
+    border-radius: 0 0 1rem 1rem;
     position: absolute;
     bottom: 0%;
-    left: 12.5%;
+    left: 25%; 
     opacity: 0.7;
     z-index: 1;
 }
 .dirt {
-    width: 70%;
-    height: 8%; 
-    background: #6D4C41; 
-    border-radius: 0 0 2rem 2rem; 
+    width: 60%; 
+    height: 5%;
+    background: #3a241d;
     position: absolute;
+    border-radius: 0 0 1rem 1rem;
     bottom: 1%;
-    left: 15%;
+    left: 20%; 
+    opacity: 0.7;
     z-index: 1;
 }
 .jar-glossy-long {
