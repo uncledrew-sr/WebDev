@@ -1,0 +1,124 @@
+body {
+    font-family: helvetica, arial, sans-serif;
+    margin: 0;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+h1 {
+    color: black;
+    text-align: center;
+    padding-top: 10px;
+    margin-bottom: 10px;
+    font-size: 2em;
+    position: relative;
+    z-index: 10;
+}
+div {
+    box-sizing: border-box;
+    padding: 0;
+    border: none;
+    margin: 0;
+}
+.container {
+    background-color: #eee;
+    width: 15%;
+    top: 0;
+    position: fixed;
+    height: 100vh;
+    padding: 10px 10px;
+    overflow-y: auto;
+    z-index: 5;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    align-content: flex-start;
+}
+#left-container {
+    left: 0;
+}
+#right-container {
+    right: 0;
+}
+.plant-holder {
+    height: 100px; 
+    border: 1px dashed #ccc;
+    /* display: flex; */
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+.plant {
+    position: relative;
+    max-width: 100%;
+    max-height: 100%;
+    z-index: 2;
+}
+#terrarium {
+    width: 600px; 
+    height: 700px;
+    margin: 50px auto; 
+    position: relative;
+}
+.jar-walls {
+    height: 85%;
+    width: 70%;
+    background: #d1e1df;
+    border-radius: 2rem; 
+    position: absolute;
+    bottom: 0.5%;
+    left: 15%;
+    opacity: 0.5;
+    z-index: 1;
+    overflow: hidden; 
+}
+.jar-top {
+    width: 60%;
+    height: 2.5%;
+    background: #d1e1df;
+    position: absolute;
+    bottom: 85.5%;
+    left: 20%;
+    opacity: 0.7;
+    z-index: 1;
+}
+.jar-bottom {
+    width: 75%;
+    height: 1%;
+    background: #d1e1df;
+    border-radius: 0 0 2rem 2rem; 
+    position: absolute;
+    bottom: 0%;
+    left: 12.5%;
+    opacity: 0.7;
+    z-index: 1;
+}
+.dirt {
+    width: 70%;
+    height: 8%; 
+    background: #6D4C41; 
+    border-radius: 0 0 2rem 2rem; 
+    position: absolute;
+    bottom: 1%;
+    left: 15%;
+    z-index: 1;
+}
+.jar-glossy-long {
+    position: absolute;
+    top: 0;
+    left: 15%;
+    height: 100%;
+    width: 3%;
+    background: white;
+    opacity: 0.2;
+    border-radius: 50%;
+}
+.jar-glossy-short {
+    position: absolute;
+    top: 20%;
+    left: 5%;
+    height: 50%;
+    width: 2%;
+    background: white;
+    opacity: 0.15;
+    border-radius: 50%;
+}
