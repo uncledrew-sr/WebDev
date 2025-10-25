@@ -1,126 +1,105 @@
-body{
-    font-family: helvetica, arial, sans-serif;
-    margin: 0;
-    overflow-x: hidden; /* 가로 스크롤 방지 */
-    min-height: 100vh;
-    position: relative; /* 식물(absolute)의 기준점 */
+body {
+	font-family: helvetica, arial, sans-serif;
 }
-div{
-    box-sizing: border-box; 
-    padding: 0;
-    border: none;
-    margin: 0;
+
+h1 {
+	color: #3a241d;
+	text-align: center;
 }
-h1{
-    color: black;
-    text-align: center;
-    padding-top: 20px;
-    margin-bottom: 30px;
-    font-size: 2em;
-}
-.container {
-    background-color: #EEEEEE;
-    width: 15%; /* 고정 너비 */
-    top: 0;
-    position: fixed; /* 뷰포트에 고정 (absolute 대신 fixed 사용) */
-    height: 100vh; /* 뷰포트 전체 높이 사용 */
-    padding: 10px;
-    overflow-y: auto; /* 내용 초과 시 스크롤 허용 */
-    z-index: 5;
-    /* Flex/Grid는 HTML 요소에 따라 추가 필요 */
-}
+
 #left-container {
-    left: 0;
+	left: 0px;
 }
+
 #right-container {
-    right: 0; /* 오른쪽 끝에 고정 */
-    left: auto; /* 불필요한 left: 0 제거 */
+	right: 0px;
 }
+
+.container {
+	background-color: #eee;
+	width: 15%;
+	top: 0px;
+	position: absolute;
+	height: 100%;
+	padding: 10px;
+}
+
 .plant-holder {
-    height: 100px; /* 고정된 높이 */
-    border: 1px dashed #ccc;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative; 
-    left: 0; /* 기존 left: -10px 제거 */
-    margin-bottom: 10px; /* 간격 추가 */
+	position: relative;
+	height: 13%;
+	left: 20%;
 }
+
 .plant {
-    /* HTML에서 식물을 사이드바 밖으로 옮겨야 드래그가 정상 작동 */
-    position: absolute; 
-    width: 100px;
-    height: auto;
-    z-index: 2;
+	position: absolute;
+	max-width: 150%;
+	max-height: 150%;
+	z-index: 2;
 }
-#terrarium {
-    width: 600px; 
-    height: 700px;
-    margin: 50px auto;
-    position: relative;
-    z-index: 2; 
-}
+
 .jar-walls {
-    height: 80%; 
-    width: 60%; 
-    background: #d1e1df;
-    border-radius: 1rem; 
-    position: absolute;
-    bottom: 0.5%;
-    left: 20%; 
-    opacity: 0.5;
-    z-index: 1;
-    overflow: hidden; 
+	height: 80%;
+	width: 60%;
+	background: #d1e1df;
+	border-radius: 10%;
+	position: absolute;
+	bottom: 0.5%;
+	left: 20%;
+	opacity: 0.5;
+	z-index: 1;
 }
+
 .jar-top {
-    width: 50%; 
-    height: 5%; 
-    background: #d1e1df;
-    position: absolute;
-    bottom: 80.5%; 
-    left: 25%; 
-    opacity: 0.7;
-    z-index: 1;
+	width: 50%;
+	height: 5%;
+	background: #d1e1df;
+	position: absolute;
+	bottom: 80.5%;
+	left: 25%;
+	opacity: 0.7;
+	z-index: 1;
 }
+
 .jar-bottom {
-    width: 50%; 
-    height: 1%;
-    background: #d1e1df;
-    border-radius: 0 0 1rem 1rem;
-    position: absolute;
-    bottom: 0%;
-    left: 25%; 
-    opacity: 0.7;
-    z-index: 1;
+	width: 50%;
+	height: 1%;
+	background: #d1e1df;
+	position: absolute;
+	bottom: 0%;
+	left: 25%;
+	opacity: 0.7;
 }
+
 .dirt {
-    width: 60%; 
-    height: 5%;
-    background: #3a241d;
-    position: absolute;
-    border-radius: 0 0 1rem 1rem;
-    bottom: 1%;
-    left: 20%; 
-    opacity: 0.7;
-    z-index: 1;
+	width: 58%;
+	height: 5%;
+	background: #3a241d;
+	position: absolute;
+	border-radius: 0 0 20rem 20rem;
+	bottom: 3%;
+	left: 21%;
+	opacity: 0.7;
+	z-index: -1;
 }
+
 .jar-glossy-long {
-    position: absolute;
-    top: 0;
-    left: 15%;
-    height: 100%;
-    width: 3%;
-    background: white;
-    opacity: 0.2;
-    border-radius: 50%;
+	width: 3%;
+	height: 20%;
+	border-radius: 2rem;
+	background: #fff;
+	position: absolute;
+	bottom: 20%;
+  opacity: 0.7;
+	left: 5%;
 }
+
 .jar-glossy-short {
-    position: absolute;
-    top: 20%;
-    left: 5%;
-    height: 50%;
-    width: 2%;
-    background: white;
-    opacity: 0.15;
-    border-radius: 50%;
+	width: 3%;
+	height: 5%;
+	border-radius: 2rem;
+	background: #fff;
+	position: absolute;
+	bottom: 45%;
+	left: 5%;
+  opacity: 0.7;
 }
