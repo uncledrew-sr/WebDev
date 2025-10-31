@@ -6,7 +6,6 @@ const quotes = [
     'What one man can invent another can discover.',
     'Nothing clears up a case so much as stating it to another person.',
     'Education never ends, Watson. It is a series of lessons, with the greatest for the last.',
-    'Beomgyu Choi.',
 ];
 
 let words = [];
