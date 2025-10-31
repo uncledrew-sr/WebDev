@@ -1,0 +1,128 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #282c34;
+    color: #e6e6e6;
+    min-height: 100vh; /* 뷰포트 전체 높이 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+h1 {
+    color: red;
+    margin-bottom: 20px;
+    font-size: 2.5em;
+    text-align: center;
+}
+p {
+    margin: 5px 0;
+    max-width: 800px;
+    text-align: center;
+    line-height: 1.5;
+}
+#quote {
+    font-size: 1.5em;
+    margin: 30px 0;
+    padding: 20px;
+    border: 1px solid #444;
+    border-radius: 8px;
+    color: black;
+    background-color: white;
+    line-height: 1.8;
+    text-align: left;
+    max-width: 90%;
+}
+#quote span {
+    transition: background-color 0.2s; /* 부드러운 전환 */
+    padding: 2px 0;
+    /* display: inline-block; */
+}
+#message {
+    font-size: 1.2em;
+    color: #a5ffa5;
+    margin-top: 15px;
+    font-weight: bold;
+}
+div {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+    max-width: 90%;
+    width: 600px;
+}
+#typed-value {
+    flex-grow: 1;
+    padding: 12px;
+    font-size: 1.2em;
+    border: 3px solid blue;
+    border-radius: 6px;
+    background-color: white;
+    color: black;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+#typed-value:focus {
+    border-color: red;
+    box-shadow: 0 0 8px rgba(97, 218, 251, 0.5);
+}
+#start {
+    padding: 12px 25px;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: black;
+    background-color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    white-space: nowrap; /* 버튼 텍스트 줄바꿈 방지 */
+}
+#start:hover {
+    background-color: red;
+}
+#start:active {
+    transform: scale(0.98);
+}
+/* 하이라이트 클래스 (현재 타이핑할 단어) */
+.highlight {
+    background-color: yellow; /* 연한 청록색 배경 */
+    border-radius: 4px;
+}
+/* 오류 클래스 (잘못된 입력) */
+.error {
+    background-color: #f77a7a !important; /* 오류 시 빨간색 배경 */
+    border: 2px solid #f77a7a !important;
+    color: #282c34; /* 오류 시 텍스트 색상 변경 (선택 사항) */
+}
+/* 미디어 쿼리 (반응형) */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+    h1 {
+        font-size: 2em;
+    }
+    #quote {
+        font-size: 1.2em;
+        padding: 15px;
+        max-width: 100%;
+    }
+    div {
+        flex-direction: column; /* 작은 화면에서 세로로 배치 */
+        gap: 10px;
+        width: 100%;
+    }
+    #typed-value,
+    #start {
+        font-size: 1em;
+        width: 100%; /* 너비 전체 사용 */
+    }
+    #start {
+        padding: 10px 20px;
+    }
+}
