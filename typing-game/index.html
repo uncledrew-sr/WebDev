@@ -13,6 +13,15 @@
         <input type="text" aria-label="current word" id="typed-value" />
         <button type="button" id="start"><i class="fa-solid fa-person-running"></i> Start</button>
     </div>
+    <div id="result-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Clear!</h2>
+            <p id="modal-time-message">X.XX seconds.</p>
+            <p id="best-time-message" style="margin-top:10px; color: green;"></p>
+            <button id="modal-close-and-restart" type="button">Restart</button>
+        </div>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>

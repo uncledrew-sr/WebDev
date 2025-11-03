@@ -1,3 +1,4 @@
+/*
 // DOM 요소 지정
 console.log(document.getElementById('plant1'));
 dragElement(document.getElementById('plant1'));
@@ -56,3 +57,57 @@ function dragElement(terrariumElement) {
     terrariumElement.style.zIndex = 10;
   }
 }
+*/
+
+// Drag and Drop API
+const plants = document.querySelectorAll('.plant');
+const terrarium = document.getElementById('terrarium');
+
+let draggedPlantId = null;
+
+plants.forEach(plant => {
+    plant.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text/plain', e.target.id);
+
+        draggedPlantId = e.target.id;
+        
+        e.target.style.zIndex = 10; 
+
+        const offset = {
+            x: e.clientX - e.target.getBoundingClientRect().left,
+            y: e.clientY - e.target.getBoundingClientRect().top
+        };
+        e.dataTransfer.setData('application/json', JSON.stringify(offset));
+    });
+
+    plant.addEventListener('dragend', (e) => {
+        e.target.style.zIndex = 2;
+        draggedPlantId = null; 
+    });
+});
+
+terrarium.addEventListener('dragover', (e) => {
+    e.preventDefault();
+});
+
+terrarium.addEventListener('drop', (e) => {
+    e.preventDefault();
+
+    const plantId = e.dataTransfer.getData('text/plain');
+    const offset = JSON.parse(e.dataTransfer.getData('application/json'));
+    const plant = document.getElementById(plantId);
+    
+    const terrariumRect = terrarium.getBoundingClientRect();
+    
+    let newLeft = e.clientX - terrariumRect.left - offset.x;
+    let newTop = e.clientY - terrariumRect.top - offset.y;
+
+    if (plant.parentNode !== document.body) {
+        document.body.appendChild(plant);
+    }
+    
+    plant.style.position = 'absolute';
+    plant.style.left = `${newLeft}px`;
+    plant.style.top = `${newTop}px`;
+    plant.style.zIndex = 2;
+});
