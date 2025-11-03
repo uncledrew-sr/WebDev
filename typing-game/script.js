@@ -12,52 +12,134 @@ let words = [];
 let wordIndex = 0;
 let startTime = Date.now();
 
+// DOM 요소 지정
 const quoteElement = document.getElementById('quote');
 const messageElement = document.getElementById('message');
 const typedValueElement = document.getElementById('typed-value');
 
-// start 버튼 클릭 이벤트
+// 🚨 모달 관련 DOM 요소
+const modal = document.getElementById('result-modal');
+const modalMessage = document.getElementById('modal-time-message');
+const closeButton = document.querySelector('.close-button'); 
+const restartButton = document.getElementById('modal-close-and-restart'); 
+// 🏆 최고 점수 DOM 요소
+const bestTimeMessage = document.getElementById('best-time-message'); 
+
+// --- 헬퍼 함수: Local Storage에서 최고 점수를 가져오는 함수 ---
+function getBestTime() {
+    // Local Storage에서 'typingBestTime' 키로 저장된 값을 가져옵니다.
+    // 값이 없으면 null이 반환되므로, Number.MAX_VALUE를 기본값으로 설정합니다.
+    const bestTime = localStorage.getItem('typingBestTime');
+    return bestTime ? parseFloat(bestTime) : Number.MAX_VALUE;
+}
+
+// --- 헬퍼 함수: Local Storage에 새로운 최고 점수를 저장하는 함수 ---
+function setBestTime(newTime) {
+    const currentBest = getBestTime();
+    // 새 시간이 기존 최고 기록보다 빠르면 (작으면) 저장합니다.
+    if (newTime < currentBest) {
+        localStorage.setItem('typingBestTime', newTime.toFixed(2));
+        return true; // 새로운 최고 기록 갱신됨
+    }
+    return false; // 최고 기록 갱신 안 됨
+}
+
+
+// --- 1. Start 버튼 클릭 이벤트 ---
 document.getElementById('start').addEventListener('click', () => {
-    const quoteIndex = Math.floor(Math.random() * quotes.length); // 무작위 인덱스 생성
-    const quote = quotes[quoteIndex]; // 무작위 인덱스 값으로 인용문 선택
-    words = quote.split(' '); // 공백 문자 기준으로 words 배열에 저장
+    const quoteIndex = Math.floor(Math.random() * quotes.length);
+    const quote = quotes[quoteIndex];
+    words = quote.split(' ');
     wordIndex = 0;
 
-    const spanWords = words.map(function(word) { return `<span>${word} </span>` }); // span 태그로 감싸고 배열에 저장
-    quoteElement.innerHTML = spanWords.join(''); // 하나의 문자열로 결합 및 설정
-    quoteElement.childNodes[0].className = 'highlight'; // 첫번째 단어 강조
-    messageElement.innerText = ''; // 메시지 요소 초기화
+    const spanWords = words.map(function(word) { return `<span>${word} </span>` });
+    quoteElement.innerHTML = spanWords.join('');
+    quoteElement.childNodes[0].className = 'highlight';
+    messageElement.innerText = '';
 
-    typedValueElement.value = ''; // 입력 필드 초기화
-    typedValueElement.focus(); // 포커스 설정
+    typedValueElement.value = '';
+    typedValueElement.focus();
 
-    startTime = new Date().getTime(); // 타이핑 시작 시간 기록
+    startTime = new Date().getTime();
 
-    document.getElementById('start').disabled = true; // Start 버튼 비활성화
+    document.getElementById('start').disabled = true;
 });
 
-// input 필드의 입력 이벤트
+
+// --- 2. Input 필드 입력 이벤트 (주요 로직) ---
 typedValueElement.addEventListener('input', () => {
-    const currentWord = words[wordIndex]; // 현재 타이핑할 단어를 currentWord에 저장
-    const typedValue = typedValueElement.value; // 입력한 값을 typedValue에 저장
+    const currentWord = words[wordIndex];
+    const typedValue = typedValueElement.value;
 
-    if (typedValue === currentWord && wordIndex === words.length - 1) { // 마지막 단어까지 입력했는지 체크
-        const elapsedTime = new Date().getTime() - startTime; // 타이핑 소요 시간 계산
-        const message = `CONGRATULATIONS! You finished in ${elapsedTime / 1000} seconds.`; // 타이핑 완료 메시지
-        messageElement.innerText = message; // 생성된 메시지를 화면에 표시
-
-        document.getElementById('start').disabled = false; // Start 버튼을 다시 활성화
-    } else if (typedValue.endsWith(' ') && typedValue.trim() === currentWord) {
-        // 입력한 값이 공백으로 끝났는지와 공백을 제거한 값이 현재 단어와 일치하는지 확인
-        typedValueElement.value = ''; // 입력 필드 초기화해서 다음 단어 입력 준비
-        wordIndex++; // 다음 단어로 이동
-        for (const wordElement of quoteElement.childNodes) { // 모든 강조 표시 제거
-        wordElement.className = ''; // 클래스 제거
+    // 🚨 마지막 단어 완료 로직
+    if (typedValue === currentWord && wordIndex === words.length - 1) { 
+        const elapsedTime = new Date().getTime() - startTime;
+        const seconds = (elapsedTime / 1000); // 초 단위 (toFixed는 문자열로 만들기 위해 나중에 사용)
+        const secondsFixed = seconds.toFixed(2);
+        
+        // 🏆 Local Storage 로직 적용
+        const isNewBest = setBestTime(seconds);
+        const bestTime = getBestTime();
+        
+        // 모달 메시지 설정
+        modalMessage.innerText = `You finished in ${secondsFixed} seconds.`;
+        
+        // 최고 점수 메시지 설정
+        if (isNewBest) {
+            bestTimeMessage.innerHTML = 'NEW Record!';
+            bestTimeMessage.style.color = 'gold'; // 새로운 최고 기록 강조
+        } else if (bestTime !== Number.MAX_VALUE) {
+            bestTimeMessage.innerText = `Best Time : ${bestTime.toFixed(2)} seconds`;
+            bestTimeMessage.style.color = 'green';
+        } else {
+            bestTimeMessage.innerText = ''; // 첫 게임인 경우 표시 안 함
         }
-        quoteElement.childNodes[wordIndex].className = 'highlight'; // 다음 타이핑할 단어에 클래스 추가
-    } else if (currentWord.startsWith(typedValue)) { // 현재 단어의 일부를 맞게 입력하고 있는지 확인
-        typedValueElement.className = ''; // 올바르게 입력했다면 클래스 제거
+        
+        modal.style.display = 'block';
+        typedValueElement.blur(); // 키보드 포커스 제거
+        document.getElementById('start').disabled = false;
+
+    } else if (typedValue.endsWith(' ') && typedValue.trim() === currentWord) {
+        // 다음 단어로 이동 로직
+        typedValueElement.value = '';
+        wordIndex++;
+        for (const wordElement of quoteElement.childNodes) {
+            wordElement.className = '';
+        }
+        if (quoteElement.childNodes[wordIndex]) {
+            quoteElement.childNodes[wordIndex].className = 'highlight';
+        }
+
+    } else if (currentWord.startsWith(typedValue)) { 
+        typedValueElement.className = 'correct'; 
     } else {
-        typedValueElement.className = 'error'; // 틀리면 error 클래스 추가
+        typedValueElement.className = 'error'; 
     }
 });
+
+
+// --- 3. 모달 닫기/재시작 이벤트 ---
+
+// 닫기 버튼 (X) 클릭 시 모달 닫기
+if (closeButton) { 
+    closeButton.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+}
+
+// 모달 내 '다시 시작' 버튼 클릭 시 모달 닫고 게임 초기화
+if (restartButton) { 
+    restartButton.addEventListener('click', () => {
+        modal.style.display = 'none';
+        document.getElementById('start').click(); 
+    });
+}
+
+// 모달 외부 클릭 시 모달 닫기
+if (modal) { 
+    window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+}

@@ -59,7 +59,7 @@ div {
     flex-grow: 1;
     padding: 12px;
     font-size: 1.2em;
-    border: 3px solid blue;
+    border: 3px solid red;
     border-radius: 6px;
     background-color: white;
     color: black;
@@ -67,8 +67,10 @@ div {
     transition: border-color 0.3s, box-shadow 0.3s;
 }
 #typed-value:focus {
-    border-color: red;
-    box-shadow: 0 0 8px rgba(97, 218, 251, 0.5);
+    /* border-color: red;
+    box-shadow: 0 0 8px rgba(97, 218, 251, 0.5); */
+    border-color: #FFD700;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
 }
 #start {
     padding: 12px 25px;
@@ -93,11 +95,28 @@ div {
     background-color: yellow; /* 연한 청록색 배경 */
     border-radius: 4px;
 }
-/* 오류 클래스 (잘못된 입력) */
+
+.correct {
+    border: 3px solid #4CAF50 !important; 
+    box-shadow: 0 0 5px #4CAF50; 
+    transition: all 0.1s ease-out;
+}
+
 .error {
     background-color: #f77a7a !important; /* 오류 시 빨간색 배경 */
     border: 2px solid #f77a7a !important;
     color: #282c34; /* 오류 시 텍스트 색상 변경 (선택 사항) */
+
+    animation: shake 0.5s;
+    animation-iteration-count: 1;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
 }
 /* 미디어 쿼리 (반응형) */
 @media (max-width: 600px) {
@@ -125,4 +144,75 @@ div {
     #start {
         padding: 10px 20px;
     }
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    color: #282c34;
+    margin: 15% auto;
+    padding: 30px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 400px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+    animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-50px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #000;
+    text-decoration: none;
+}
+
+#modal-close-and-restart {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1.1em;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#modal-close-and-restart:hover {
+    background-color: darkred;
+}
+
+#best-time-message {
+    margin-top: 10px;
+    font-size: 1.2em;
+}
+
+.modal-content #best-time-message[style*="gold"] {
+    text-shadow: 0 0 5px gold;
 }
