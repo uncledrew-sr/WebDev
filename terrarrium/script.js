@@ -1,5 +1,4 @@
 /*
-// DOM 요소 지정
 console.log(document.getElementById('plant1'));
 dragElement(document.getElementById('plant1'));
 dragElement(document.getElementById('plant2'));
@@ -21,7 +20,6 @@ function dragElement(terrariumElement) {
   
   terrariumElement.onpointerdown = pointerDrag;
 
-  // 더블클릭(ondblclick) -> z-index 변경하여 식물을 가장 위로 가져옴(bringToFront)
   terrariumElement.ondblclick = bringToFront;
 
   function pointerDrag(e) {

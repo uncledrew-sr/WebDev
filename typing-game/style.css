@@ -7,7 +7,7 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #282c34;
     color: #e6e6e6;
-    min-height: 100vh; /* 뷰포트 전체 높이 */
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -38,9 +38,8 @@ p {
     max-width: 90%;
 }
 #quote span {
-    transition: background-color 0.2s; /* 부드러운 전환 */
+    transition: background-color 0.2s;
     padding: 2px 0;
-    /* display: inline-block; */
 }
 #message {
     font-size: 1.2em;
@@ -67,8 +66,6 @@ div {
     transition: border-color 0.3s, box-shadow 0.3s;
 }
 #typed-value:focus {
-    /* border-color: red;
-    box-shadow: 0 0 8px rgba(97, 218, 251, 0.5); */
     border-color: #FFD700;
     box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
 }
@@ -82,7 +79,7 @@ div {
     border-radius: 6px;
     cursor: pointer;
     transition: background-color 0.2s, transform 0.1s;
-    white-space: nowrap; /* 버튼 텍스트 줄바꿈 방지 */
+    white-space: nowrap;
 }
 #start:hover {
     background-color: red;
@@ -90,9 +87,9 @@ div {
 #start:active {
     transform: scale(0.98);
 }
-/* 하이라이트 클래스 (현재 타이핑할 단어) */
+
 .highlight {
-    background-color: yellow; /* 연한 청록색 배경 */
+    background-color: yellow;
     border-radius: 4px;
 }
 
@@ -103,9 +100,9 @@ div {
 }
 
 .error {
-    background-color: #f77a7a !important; /* 오류 시 빨간색 배경 */
+    background-color: #f77a7a !important;
     border: 2px solid #f77a7a !important;
-    color: #282c34; /* 오류 시 텍스트 색상 변경 (선택 사항) */
+    color: #282c34;
 
     animation: shake 0.5s;
     animation-iteration-count: 1;
@@ -118,7 +115,7 @@ div {
     75% { transform: translateX(-5px); }
     100% { transform: translateX(0); }
 }
-/* 미디어 쿼리 (반응형) */
+
 @media (max-width: 600px) {
     body {
         padding: 10px;
@@ -132,14 +129,14 @@ div {
         max-width: 100%;
     }
     div {
-        flex-direction: column; /* 작은 화면에서 세로로 배치 */
+        flex-direction: column;
         gap: 10px;
         width: 100%;
     }
     #typed-value,
     #start {
         font-size: 1em;
-        width: 100%; /* 너비 전체 사용 */
+        width: 100%;
     }
     #start {
         padding: 10px 20px;

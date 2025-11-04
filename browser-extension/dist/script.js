@@ -1,4 +1,3 @@
-// DOM 요소 선택
 const formArea = document.querySelector('.form-data');
 const resultArea = document.querySelector('.result');
 const submitButton = document.querySelector('.search-btn');
