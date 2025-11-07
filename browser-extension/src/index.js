@@ -21,16 +21,22 @@ function reset(e) {
 }
 
 function init() {
+     // Check if user has previously saved API credentials
     const storedApiKey = localStorage.getItem('apiKey');
     const storedRegion = localStorage.getItem('regionName');
 
+    // Set extension icon to generic green (placeholder for future lesson)
+    // TODO: Implement icon update in next lesson
+
     if (storedApiKey === null || storedRegion === null) {
+        // First-time user: show the setup form
         form.style.display = 'block';
         results.style.display = 'none';
         loading.style.display = 'none';
         clearBtn.style.display = 'none';
         errors.textContent = '';
     } else {
+        // Returning user: load their saved data automatically
         displayCarbonUsage(storedApiKey, storedRegion);
         results.style.display = 'none';
         form.style.display = 'none';
@@ -53,45 +59,102 @@ function setUpUser(apiKey, regionName) {
     displayCarbonUsage(apiKey, regionName);
 }
 
-async function displayCarbonUsage(key, regionName) {
+async function displayCarbonUsage(apiKey, region) {
     try {
-        const API_ENDPOINT = `https://api.tmrow.com/v1/carbon/latest?zone=${regionName}`;
-        
-        const response = await fetch(API_ENDPOINT, {
+        // Fetch carbon intensity data from CO2 Signal API
+        const response = await fetch('https://api.electricitymaps.com/v3/carbon-intensity/latest', {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${key}`, 
+                'auth-token': apiKey,
                 'Content-Type': 'application/json'
+            },
+            // Add query parameters for the specific region
+            ...new URLSearchParams({ countryCode: region }) && {
+                url: `https://api.electricitymaps.com/v3/carbon-intensity/latest?countryCode=${region}`
             }
         });
 
+        // Check if the API request was successful
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({ message: '알 수 없는 서버 오류' }));
-            throw new Error(`API 요청 실패 (${response.status}): ${errorData.message || '인증 또는 지역 오류.'}`);
+            throw new Error(`API request failed: ${response.status}`);
         }
 
         const data = await response.json();
+        const carbonData = data;
+        // Calculate rounded carbon intensity value
+        let carbonIntensity = Math.round(carbonData.carbonIntensity);
 
-        myregion.textContent = regionName;
-        
-        const carbonIntensity = data.carbonIntensity;
-        const fossilFuel = data.fossilFuelPercentage;
-        
-        usage.textContent = `${carbonIntensity.toFixed(0)} gCO2/kWh`;
-        fossilfuel.textContent = `${(fossilFuel * 100).toFixed(1)}%`;
+        calculateColor(carbonIntensity);
 
-        results.style.display = 'block';
-        
-    } catch (error) {
-        console.error('API 호출 중 오류 발생:', error);
-        errors.textContent = `데이터 로드 실패: ${error.message}`;
-        
-        myregion.textContent = regionName;
-        usage.textContent = 'N/A';
-        fossilfuel.textContent = 'N/A';
-        results.style.display = 'block';
-
-    } finally {
+        // Update the user interface with fetched data
         loading.style.display = 'none';
+        form.style.display = 'none';
+        myregion.textContent = region.toUpperCase();
+        usage.textContent = `${carbonIntensity} grams (grams CO₂ emitted per kilowatt hour)`;
+        
+        fossilfuel.textContent = `${carbonData.fossilFuelPercentage.toFixed(2)}% (percentage of fossil fuels used to generate electricity)`;
+        results.style.display = 'block';
+
+        // TODO: calculateColor(carbonIntensity) - implement in next lesson
+
+    } catch (error) {
+        console.error('Error fetching carbon data:', error);
+        
+        // Show user-friendly error message
+        loading.style.display = 'none';
+        results.style.display = 'none';
+        errors.textContent = 'Sorry, we couldn\'t fetch data for that region. Please check your API key and region code.';
     }
+}
+
+calculateColor = async (value) => {
+    let co2Scale = [0, 150, 600, 750, 800];
+    let colors = ['#2AA364', '#F5EB4D', '#9E4229', '#381D02', '#381D02'];
+
+    let closestNum = co2Scale.sort((a, b) => {
+        return Math.abs(a - value) - Math.abs(b - value);
+    })[0];
+    //console.log(value + ' is closest to ' + closestNum);
+    let num = (element) => element > closestNum;
+    let scaleIndex = co2Scale.findIndex(num);
+
+    let closestColor = colors[scaleIndex];
+    //console.log(scaleIndex, closestColor);
+
+    chrome.runtime.sendMessage({ action: 'updateIcon', value: { color: closestColor } });
+};
+
+chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
+	if (msg.action === 'updateIcon') {
+			let iconSizes = [16, 32, 48, 128];
+			let imageDataDict = {};
+
+			iconSizes.forEach((size) => {
+					imageDataDict[size] = drawIcon(msg.value.color, size);
+			});
+
+			chrome.action.setIcon({ imageData: imageDataDict });
+	}
+});
+
+function drawIcon(color, size) {
+	let canvas = new OffscreenCanvas(size, size);
+	let context = canvas.getContext('2d');
+
+	context.clearRect(0, 0, size, size);
+	context.beginPath();
+	context.fillStyle = color;
+	context.arc(size / 2, size / 2, size / 2, 0, 2 * Math.PI);
+	context.fill();
+
+	return context.getImageData(0, 0, size, size);
+}
+
+form.addEventListener('submit', (e) => handleSubmit(e));
+clearBtn.addEventListener('click', (e) => reset(e));
+init();
+
+function handleSubmit(e) {
+    e.preventDefault();
+    setUpUser(apiKey.value, region.value);
 }
