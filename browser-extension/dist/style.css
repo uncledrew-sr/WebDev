@@ -28,6 +28,7 @@ address,caption,cite,code,dfn,em,var{font-style:normal;font-weight:normal}
   box-sizing: border-box;
   text-align: center;
   font-family: Arial, sans-serif;
+  position: relative;
 }
 
 img {
@@ -97,19 +98,46 @@ button {
   color: red;
 }
 
-@media (prefers-color-scheme: dark) { 
-  body {
-    background: #333;
-    color: #f0f0f0;
-  }
+.toggle-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: transparent;
+  color: #333; /* 라이트 모드 기본 색상 */
+  font-size: 1.2rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ccc;
+  z-index: 10;
+}
 
-  h1, h2, label {
-    color: #f0f0f0;
-  }
+body[dark-theme="dark"] {
+  background: #333;
+  color: #f0f0f0;
+}
 
-  input[type="text"] {
-    background: #555;
-    color: #f0f0f0;
-    border-color: #777;
-  }
+body[dark-theme="dark"] h1,
+body[dark-theme="dark"] h2,
+body[dark-theme="dark"] label {
+  color: #f0f0f0;
+}
+
+body[dark-theme="dark"] input[type="text"] {
+  background: #555;
+  color: #f0f0f0;
+  border-color: #777;
+}
+
+body[dark-theme="dark"] .toggle-btn {
+  color: #f0f0f0;
+  border-color: #777;
+}
+
+body[dark-theme="dark"] .errors {
+    color: #ff8888; /* 다크 모드 오류 색상 조정 */
 }

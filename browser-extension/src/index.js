@@ -1,160 +1,134 @@
 const form = document.querySelector('.form-data');
-const region = document.querySelector('.region-name');
-const apiKey = document.querySelector('.api-key');
-
-const errors = document.querySelector('.errors');
-const loading = document.querySelector('.loading');
-const results = document.querySelector('.result-container');
-const usage = document.querySelector('.carbon-usage');
-const fossilfuel = document.querySelector('.fossil-fuel');
-const myregion = document.querySelector('.my-region');
+const regionInput = document.querySelector('.region-name');
+const apiKeyInput = document.querySelector('.api-key');
+const searchBtn = document.querySelector('.search-btn');
 const clearBtn = document.querySelector('.clear-btn');
 
-form.addEventListener('submit', (e) => handleSubmit(e));
-clearBtn.addEventListener('click', (e) => reset(e));
-init();
+const resultDiv = document.querySelector('.result');
+const formDataDiv = document.querySelector('.form-data');
+const loadingDiv = document.querySelector('.loading');
+const errorsDiv = document.querySelector('.errors');
+const myRegionSpan = document.querySelector('.my-region');
+const carbonUsageSpan = document.querySelector('.carbon-usage');
+const fossilFuelSpan = document.querySelector('.fossil-fuel');
 
-function reset(e) {
-    e.preventDefault();
-    localStorage.removeItem('regionName');
-    init();
-}
+const darkModeToggle = document.getElementById('dark-mode-toggle');
+const body = document.body;
+const THEME_KEY = 'currentTheme';
 
-function init() {
-     // Check if user has previously saved API credentials
-    const storedApiKey = localStorage.getItem('apiKey');
-    const storedRegion = localStorage.getItem('regionName');
+const API_KEY_STORAGE = 'apiKey';
+const REGION_NAME_STORAGE = 'regionName';
 
-    // Set extension icon to generic green (placeholder for future lesson)
-    // TODO: Implement icon update in next lesson
-
-    if (storedApiKey === null || storedRegion === null) {
-        // First-time user: show the setup form
-        form.style.display = 'block';
-        results.style.display = 'none';
-        loading.style.display = 'none';
-        clearBtn.style.display = 'none';
-        errors.textContent = '';
+function initializeTheme() {
+    const storedTheme = localStorage.getItem(THEME_KEY);
+    if (storedTheme) {
+        body.setAttribute('dark-theme', storedTheme);
     } else {
-        // Returning user: load their saved data automatically
-        displayCarbonUsage(storedApiKey, storedRegion);
-        results.style.display = 'none';
-        form.style.display = 'none';
-        clearBtn.style.display = 'block';
+        body.setAttribute('dark-theme', 'light');
     }
-};
-
-function handleSubmit(e) {
-    e.preventDefault();
-    setUpUser(apiKey.value, region.value);
 }
 
-function setUpUser(apiKey, regionName) {
-    localStorage.setItem('apiKey', apiKey);
-    localStorage.setItem('regionName', regionName);
-    loading.style.display = 'block';
-    errors.textContent = '';
-    clearBtn.style.display = 'block';
+function toggleTheme() {
+    const currentTheme = body.getAttribute('dark-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    body.setAttribute('dark-theme', newTheme);
+    localStorage.setItem(THEME_KEY, newTheme);
+}
 
-    displayCarbonUsage(apiKey, regionName);
+function setUIState(showForm, showResult, showLoading, showError, errorMessage = '') {
+    formDataDiv.style.display = showForm ? 'block' : 'none';
+    resultDiv.style.display = showResult ? 'block' : 'none';
+    loadingDiv.style.display = showLoading ? 'block' : 'none';
+    errorsDiv.style.display = showError ? 'block' : 'none';
+    errorsDiv.textContent = errorMessage; // 오류 메시지 설정
 }
 
 async function displayCarbonUsage(apiKey, region) {
+    setUIState(false, true, true, false);
+
     try {
-        // Fetch carbon intensity data from CO2 Signal API
-        const response = await fetch('https://api.electricitymaps.com/v3/carbon-intensity/latest', {
-            method: 'GET',
+        const response = await fetch(`https://api.electricitymaps.com/v3/carbon-intensity/latest?zone=${region}`, {
             headers: {
-                'auth-token': apiKey,
-                'Content-Type': 'application/json'
-            },
-            // Add query parameters for the specific region
-            ...new URLSearchParams({ countryCode: region }) && {
-                url: `https://api.electricitymaps.com/v3/carbon-intensity/latest?countryCode=${region}`
+                'auth-token': apiKey
             }
         });
 
-        // Check if the API request was successful
         if (!response.ok) {
-            throw new Error(`API request failed: ${response.status}`);
+            const errorData = await response.json();
+            throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json();
-        const carbonData = data;
-        // Calculate rounded carbon intensity value
-        let carbonIntensity = Math.round(carbonData.carbonIntensity);
+        const carbonData = await response.json();
 
+        const carbonIntensity = Math.round(carbonData.carbonIntensity);
+        const fossilFuelPercentage = carbonData.fossilFuelPercentage.toFixed(2);
+
+        myRegionSpan.textContent = region.toUpperCase();
+        carbonUsageSpan.textContent = `${carbonIntensity} grams CO2 emitted per kilowatt hour`;
+        fossilFuelSpan.textContent = `${fossilFuelPercentage}%`;
+
+        setUIState(false, true, false, false);
         calculateColor(carbonIntensity);
-
-        // Update the user interface with fetched data
-        loading.style.display = 'none';
-        form.style.display = 'none';
-        myregion.textContent = region.toUpperCase();
-        usage.textContent = `${carbonIntensity} grams (grams CO₂ emitted per kilowatt hour)`;
-        
-        fossilfuel.textContent = `${carbonData.fossilFuelPercentage.toFixed(2)}% (percentage of fossil fuels used to generate electricity)`;
-        results.style.display = 'block';
-
-        // TODO: calculateColor(carbonIntensity) - implement in next lesson
-
     } catch (error) {
         console.error('Error fetching carbon data:', error);
-        
-        // Show user-friendly error message
-        loading.style.display = 'none';
-        results.style.display = 'none';
-        errors.textContent = 'Sorry, we couldn\'t fetch data for that region. Please check your API key and region code.';
+        setUIState(false, true, false, true, `Error: ${error.message}. Please check your API Key or Region Name.`);
     }
 }
 
-calculateColor = async (value) => {
-    let co2Scale = [0, 150, 600, 750, 800];
-    let colors = ['#2AA364', '#F5EB4D', '#9E4229', '#381D02', '#381D02'];
+function setUpUser(apiKey, regionName) {
+    localStorage.setItem(API_KEY_STORAGE, apiKey);
+    localStorage.setItem(REGION_NAME_STORAGE, regionName);
+    displayCarbonUsage(apiKey, regionName);
+}
 
-    let closestNum = co2Scale.sort((a, b) => {
-        return Math.abs(a - value) - Math.abs(b - value);
-    })[0];
-    //console.log(value + ' is closest to ' + closestNum);
-    let num = (element) => element > closestNum;
-    let scaleIndex = co2Scale.findIndex(num);
+function reset() {
+    localStorage.removeItem(REGION_NAME_STORAGE);
+    localStorage.removeItem(API_KEY_STORAGE);
+    regionInput.value = '';
+    apiKeyInput.value = '';
+    init();
+}
 
-    let closestColor = colors[scaleIndex];
-    //console.log(scaleIndex, closestColor);
+function calculateColor(value) {
+    let color = '#2AA364';
+    if (value > 800) {
+        color = '#381D02';
+    } else if (value > 750) {
+        color = '#9E4229';
+    } else if (value > 600) {
+        color = '#F5EB4D';
+    } else if (value > 150) {
+        color = '#2AA364';
+    }
 
-    chrome.runtime.sendMessage({ action: 'updateIcon', value: { color: closestColor } });
-};
+    chrome.runtime.sendMessage({ action: 'updateIcon', color: color });
+}
 
-chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
-	if (msg.action === 'updateIcon') {
-			let iconSizes = [16, 32, 48, 128];
-			let imageDataDict = {};
+function init() {
+    const savedApiKey = localStorage.getItem(API_KEY_STORAGE);
+    const savedRegionName = localStorage.getItem(REGION_NAME_STORAGE);
 
-			iconSizes.forEach((size) => {
-					imageDataDict[size] = drawIcon(msg.value.color, size);
-			});
+    if (savedApiKey && savedRegionName) {
+        displayCarbonUsage(savedApiKey, savedRegionName);
+    } else {
+        setUIState(true, false, false, false);
+    }
+}
 
-			chrome.action.setIcon({ imageData: imageDataDict });
-	}
+form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const region = regionInput.value.trim();
+    const apiKey = apiKeyInput.value.trim();
+
+    if (region && apiKey) {
+        setUpUser(apiKey, region);
+    } else {
+        setUIState(true, false, false, true, "Please enter both Region Name and API Key.");
+    }
 });
 
-function drawIcon(color, size) {
-	let canvas = new OffscreenCanvas(size, size);
-	let context = canvas.getContext('2d');
+clearBtn.addEventListener('click', reset);
+darkModeToggle.addEventListener('click', toggleTheme);
 
-	context.clearRect(0, 0, size, size);
-	context.beginPath();
-	context.fillStyle = color;
-	context.arc(size / 2, size / 2, size / 2, 0, 2 * Math.PI);
-	context.fill();
-
-	return context.getImageData(0, 0, size, size);
-}
-
-form.addEventListener('submit', (e) => handleSubmit(e));
-clearBtn.addEventListener('click', (e) => reset(e));
+initializeTheme();
 init();
-
-function handleSubmit(e) {
-    e.preventDefault();
-    setUpUser(apiKey.value, region.value);
-}
