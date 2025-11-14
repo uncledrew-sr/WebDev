@@ -12,17 +12,14 @@ window.onload = async() => {
   const canvas = document.getElementById("myCanvas");
   const ctx = canvas.getContext("2d");
 
-  const backgroundImg = await loadTexture('assets/background/starBackground.png');
-  const pattern = ctx.createPattern(backgroundImg, 'repeat');
   const heroImg = await loadTexture('assets/player.png')
   const enemyImg = await loadTexture('assets/enemyShip.png')
+  const backgroundImg = await loadTexture('assets/background/starBackground.png');
+  const pattern = ctx.createPattern(backgroundImg, 'repeat');
   
   // ctx.fillStyle = 'black';
-  // ctx.fillRect(0,0, canvas.width, canvas.height);
   ctx.fillStyle = pattern;
   ctx.fillRect(0, 0, canvas.width, canvas.height);  
-
-  // ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
 
   const mainX = canvas.width/2 - 45;
   const mainY = canvas.height - (canvas.height/4);
@@ -63,7 +60,8 @@ function createEnemies2(ctx, canvas, enemyImg){
     const enemiesInRow = NUM_ROWS - r; 
     const rowWidth = enemiesInRow * enemyImg.width;
     const startX = (canvas.width - rowWidth) / 2;
-    const currentY = r * enemyImg.height; 
+    const currentY = r * enemyImg.height;
+    
     for (let c = 0; c < enemiesInRow; c++) {
       const currentX = startX + c * enemyImg.width;
       ctx.drawImage(enemyImg, currentX, currentY);
