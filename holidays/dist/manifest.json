@@ -1,0 +1,15 @@
+{
+    "manifest_version": 3,
+    "name": "Is Today A Holiday?",
+    "version": "1.0",
+    "description": "Checks if today is a public holiday in your country.",
+    "action": {
+        "default_popup": "popup.html"
+    },
+    "permissions": [
+        "storage"
+    ],
+    "host_permissions": [
+        "https://date.nager.at/"
+    ]
+}
