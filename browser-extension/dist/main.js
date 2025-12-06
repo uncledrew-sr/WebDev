@@ -1,1 +1,18 @@
-document.querySelector(".form-data"),document.querySelector(".region-name"),document.querySelector(".api-key"),document.querySelector(".errors"),document.querySelector(".loading"),document.querySelector(".result-container"),document.querySelector(".carbon-usage"),document.querySelector(".fossil-fuel"),document.querySelector(".my-region"),document.querySelector(".clear-btn");
+(()=>{const e=document.querySelector(".form-data"),t=document.querySelector(".region-name"),n=document.querySelector(".api-key"),o=document.querySelector(".errors"),a=document.querySelector(".loading"),l=document.querySelector(".result-container"),r=document.querySelector(".carbon-usage"),c=(document.querySelector(".fossil-fuel"),document.querySelector(".my-region")),s=document.querySelector(".clear-btn");function i(e){e.preventDefault(),localStorage.removeItem("regionName"),u()}function u(){const t=localStorage.getItem("apiKey"),n=localStorage.getItem("regionName");null===t||null===n?(e.style.display="block",l.style.display="none",a.style.display="none",s.style.display="none",o.textContent=""):(m(t,n),l.style.display="none",e.style.display="none",s.style.display="block")}function y(e){e.preventDefault(),d(n.value,t.value)}function d(e,t){localStorage.setItem("apiKey",e),localStorage.setItem("regionName",t),a.style.display="block",o.textContent="",s.style.display="block",m(e,t)}
+
+async function m(t,n){
+    try{
+        const url = `https://api.electricitymaps.com/v3/carbon-intensity/latest?countryCode=${n}`;
+        const o=await fetch(url,{
+            method:"GET",
+            headers:{"auth-token":t,"Content-Type":"application/json"}
+        });
+        if(!o.ok)throw new Error(`API request failed: ${o.status}`);
+        const s=await o.json();
+        let i=Math.round(s.carbonIntensity);
+        calculateColor(i),a.style.display="none",e.style.display="none",c.textContent=n.toUpperCase(),r.textContent=`${i} grams (grams CO₂ emitted per kilowatt hour)`,l.style.display="block"}
+    catch(e){
+        console.error("Error fetching carbon data:",e),a.style.display="none",l.style.display="none",o.textContent="Sorry, we couldn't fetch data for that region. Please check your API key and region code."}
+}
+
+function y(e){e.preventDefault(),d(n.value,t.value)}e.addEventListener("submit",e=>y(e)),s.addEventListener("click",e=>i(e)),u(),calculateColor=async e=>{let t=[0,150,600,750,800],n=t.sort((t,n)=>Math.abs(t-e)-Math.abs(n-e))[0],o=["#2AA364","#F5EB4D","#9E4229","#381D02","#381D02"][t.findIndex(e=>e>n)];chrome.runtime.sendMessage({action:"updateIcon",value:{color:o}})},chrome.runtime.onMessage.addListener(function(e,t,n){if("updateIcon"===e.action){let t={};[16,32,48,128].forEach(n=>{t[n]=function(e,t){let n=new OffscreenCanvas(t,t).getContext("2d");return n.clearRect(0,0,t,t),n.beginPath(),n.fillStyle=e,n.arc(t/2,t/2,t/2,0,2*Math.PI),n.fill(),n.getImageData(0,0,t,t)}(e.value.color,n)}),chrome.action.setIcon({imageData:t})}}),e.addEventListener("submit",e=>y(e)),s.addEventListener("click",e=>i(e)),u()})();

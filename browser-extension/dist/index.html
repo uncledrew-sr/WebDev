@@ -7,10 +7,8 @@
     <title>My Carbon Trigger</title>
     <link rel="stylesheet" href="style.css">
 </head>
+</head>
 <body class="container" dark-theme="light">
-    <button id="dark-mode-toggle" class="toggle-btn">
-        <i class="fas fa-moon"></i>
-    </button>
     <img alt="plants and people" src="images/plants-people.png" />
     <div>
         <h1>Welcome to Your Personal Carbon Trigger!</h1>
@@ -22,11 +20,22 @@
         </div>
         <div>
             <label for="region">Region Name</label>
-            <input type="text" id="region" required class="region-name" />
+            <select id="region" required class="region-name">
+                <option value="" disabled selected>Select a region</option>
+                <option value="US">United States (US)</option>
+                <option value="GB">United Kingdom (GB)</option>
+                <option value="BR">Brazil (BR)</option>
+                <option value="AU">Australia (AU)</option>
+                <option value="CA">Canada (CA)</option>
+                <option value="DE">Germany (DE)</option>
+                <option value="FR">France (FR)</option>
+                <option value="UA">Ukraine (UA)</option>
+                <option value="KR">South Korea (KR)</option>
+            </select>
         </div>
         <div>
             <label for="api">Your API Key from tmrow</label>
-            <input type="text" id="api" required class="api-key" />
+            <input type="password" id="api" required class="api-key" />
         </div>
         <button class="search-btn">Submit</button>
     </form>
@@ -42,6 +51,6 @@
         </div>
         <button class="clear-btn">Change region</button>
     </div>
-    <script src="script.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>
