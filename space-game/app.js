@@ -136,6 +136,8 @@ class Boss extends Enemy {
         this.maxHealth = 1000;
         this.health = this.maxHealth;
         this.img = ufoImg;
+        this.speedX = 200;
+        this.direction = 1;
     }
     takeDamage(points) {
         this.health -= points;
@@ -360,13 +362,26 @@ function updateGameObjects(dt) {
     }
 
     gameObjects.forEach(go => {
-        if (go.type === 'Enemy' || go.type === 'Boss') {
+        if (go.type === 'Boss') {
+            go.x += go.speedX * go.direction * dt;
+
+            if (go.x + go.width > canvas.width) {
+                go.x = canvas.width - go.width;
+                go.direction = -1;
+            }
+            else if (go.x < 0) {
+                go.x = 0;
+                go.direction = 1;
+            }
+        } 
+        else if (go.type === 'Enemy') {
             go.y += 50 * dt;
             if (go.y > canvas.height) { 
                 go.dead = true;
             }
-        } else if (go.type === 'Laser' || go.type === 'BossLaser') {
-            let laserSpeed = (go.type === 'BossLaser') ? 100 : 
+        } 
+        else if (go.type === 'Laser' || go.type === 'BossLaser') {
+            let laserSpeed = (go.type === 'BossLaser') ? 200 :
                              (go instanceof SmallLaser) ? 200 : 150;
 
             go.y += (go.type === 'BossLaser') ? laserSpeed * dt : -laserSpeed * dt;
