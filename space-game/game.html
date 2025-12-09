@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retro Game Interface</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <title>Cyberpunk Arcade</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@700&display=swap" rel="stylesheet">
     <style>
         body {
-            background-color: #121212;
+            background-color: #050505;
+            background-image: 
+                radial-gradient(circle at 50% 50%, #1a1a2e 0%, #000000 100%);
             margin: 0;
             height: 100vh;
             display: flex;
@@ -16,132 +18,395 @@
             font-family: 'Press Start 2P', cursive;
             color: white;
             overflow: hidden;
+            user-select: none;
         }
 
-        .arcade-console {
-            background-color: #2c3e50;
-            padding: 40px;
-            border-radius: 20px;
-            border: 5px solid #34495e;
+        .arcade-cabinet {
+            background: linear-gradient(135deg, #2b323c 0%, #141414 100%);
+            padding: 30px;
+            border-radius: 30px;
+            
+            border: 4px solid #333;
             box-shadow: 
-                0 0 0 10px #2c3e50,
-                0 0 50px rgba(0, 255, 255, 0.2),
-                inset 0 0 30px rgba(0,0,0,0.5);
+                inset 0 0 20px rgba(0,0,0,0.8),
+                0 0 0 5px #000, 
+                0 0 0 8px #0ff, 
+                0 0 30px #0ff, 
+                0 20px 50px rgba(0,0,0,0.8);
+            
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
-            width: 1100px;
+            position: relative;
+            max-width: 95vw;
+            max-height: 95vh;
+            
+            background-image: 
+                linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000),
+                linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000);
+            background-size: 4px 4px;
+            background-position: 0 0, 2px 2px;
+
+            width: auto;
+            max-width: 95vw;
+            max-height: 95vh;
         }
 
-        .ui-header {
+        .cabinet-header {
             width: 100%;
             display: flex;
             justify-content: space-between;
-            color: #f1c40f;
-            text-shadow: 2px 2px #c0392b;
-            font-size: 14px;
+            align-items: center;
             margin-bottom: 10px;
-            padding: 0 10px;
+            background: #111;
+            border-radius: 15px;
+            border: 2px solid #444;
+            box-shadow: inset 0 0 10px #000;
             box-sizing: border-box;
         }
 
-        .monitor-frame {
-            background-color: #000;
-            padding: 20px;
-            border-radius: 10px;
-            border: 4px solid #95a5a6;
-            box-shadow: inset 0 0 20px rgba(255,255,255,0.1);
+        .speaker-grill {
+            width: 80px;
+            height: 40px;
+            background-image: radial-gradient(#333 30%, transparent 31%);
+            background-size: 4px 4px;
+        }
+
+        .game-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            color: #fff;
+            text-transform: uppercase;
+            text-shadow: 
+                0 0 5px #f0f,
+                0 0 10px #f0f,
+                0 0 20px #f0f;
+            letter-spacing: 3px;
+        }
+
+        .monitor-bezel {
+            background-color: #080808;
+            border-radius: 15px;
+            border: 2px solid #333;
+            box-shadow: 
+                inset 0 0 40px rgba(0,0,0,1),
+                0 0 15px rgba(0,0,0,0.5);
             position: relative;
-            width: 100%;
-            box-sizing: border-box;
             display: flex;
-            justify-content: center; 
+            justify-content: center;
             align-items: center;
         }
 
         canvas#myCanvas {
-            background-color: black;
-            box-shadow: 0 0 10px rgba(0,255,0,0.1);
-            max-width: 100%; 
+            background-color: #000;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+            border-radius: 4px;
             display: block;
+            max-width: 100%;
+            height: auto;
         }
 
         .scanlines {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(
                 to bottom,
                 rgba(255,255,255,0),
                 rgba(255,255,255,0) 50%,
-                rgba(0,0,0,0.2) 50%,
-                rgba(0,0,0,0.2)
+                rgba(0,0,0,0.3) 50%,
+                rgba(0,0,0,0.3)
             );
             background-size: 100% 4px;
             pointer-events: none;
             z-index: 10;
-            border-radius: 5px;
+            border-radius: 4px;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.7);
         }
 
-        .ui-footer {
+        .control-panel {
             width: 100%;
+            margin-top: 15px;
+            padding: 10px;
+            background: linear-gradient(to bottom, #2c3e50, #1a252f);
+            border-radius: 10px 10px 30px 30px;
+            border-top: 2px solid #555;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: inset 0 5px 10px rgba(255,255,255,0.1);
+            position: relative;
+        }
+
+        .screw {
+            width: 10px; height: 10px;
+            background: #555;
+            border-radius: 50%;
+            box-shadow: inset 1px 1px 2px #000;
+            position: absolute;
+        }
+        .screw.tl { top: 10px; left: 10px; }
+        .screw.tr { top: 10px; right: 10px; }
+        .screw.bl { bottom: 10px; left: 10px; }
+        .screw.br { bottom: 10px; right: 10px; }
+
+        .arcade-button-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .arcade-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 4px solid rgba(0,0,0,0.5);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.1s;
             display: flex;
             justify-content: center;
-            gap: 30px;
             align-items: center;
-            margin-top: 10px;
+            font-size: 24px;
+            color: rgba(255,255,255,0.8);
         }
 
-        .deco-btn {
-            width: 40px;
-            height: 40px;
+        .arcade-btn::after {
+            content: '';
+            position: absolute;
+            top: 5px; left: 5px; right: 5px; bottom: 5px;
             border-radius: 50%;
-            box-shadow: 0 5px #1a252f;
-            cursor: pointer;
-            transition: transform 0.1s;
+            background: linear-gradient(to bottom right, rgba(255,255,255,0.4), transparent);
         }
-        .deco-btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 1px #1a252f;
+
+        .btn-red {
+            background: radial-gradient(circle at 30% 30%, #ff5e57, #c0392b);
+            box-shadow: 
+                0 5px 0 #80261f,
+                0 10px 10px rgba(0,0,0,0.5),
+                0 0 20px rgba(255, 0, 0, 0.4);
         }
-        .btn-red { background-color: #e74c3c; }
-        .btn-blue { background-color: #3498db; }
-        
-        .deco-text {
+        .btn-red:active {
+            transform: translateY(5px);
+            box-shadow: 0 0 0 #80261f, inset 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .btn-blue {
+            background: radial-gradient(circle at 30% 30%, #3498db, #2980b9);
+            box-shadow: 
+                0 5px 0 #1c5980,
+                0 10px 10px rgba(0,0,0,0.5),
+                0 0 20px rgba(0, 100, 255, 0.4);
+        }
+        .btn-blue:active {
+            transform: translateY(5px);
+            box-shadow: 0 0 0 #1c5980, inset 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .label {
             font-size: 10px;
-            color: #bdc3c7;
+            color: #aaa;
+            margin-top: 5px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .insert-coin {
+            color: #f1c40f;
+            font-size: 14px;
+            animation: blink 1s infinite;
+            border: 2px solid #f1c40f;
+            padding: 5px 15px;
+            border-radius: 5px;
+            background: #000;
+        }
+        @keyframes blink { 50% { opacity: 0.3; } }
+
+        .hud-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 20;
+            font-family: 'Share Tech Mono', 'Courier New', monospace;
+            display: flex;
+            justify-content: space-between;
+            padding: 40px;
+            box-sizing: border-box;
+        }
+
+        .hud-panel {
+            width: 280px;
+            height: 400px;
+            background: rgba(0, 20, 0, 0.6);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.1), inset 0 0 20px rgba(0, 20, 0, 0.8);
+            color: #0f0;
+            padding: 20px;
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+            
+            clip-path: polygon(
+                10% 0, 100% 0, 100% 90%, 90% 100%, 0 100%, 0 10%
+            );
+            
+            backdrop-filter: blur(5px);
+        }
+
+        .left-panel {
+            margin-right: auto;
+            text-align: right;
+            border-left: 4px solid rgba(0, 255, 0, 0.6);
+        }
+
+        .right-panel {
+            margin-left: auto;
+            text-align: left;
+            border-right: 4px solid rgba(0, 255, 0, 0.6);
+        }
+
+        .hud-panel::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(0,255,0,0), rgba(0,255,0,0.8));
+        }
+        .left-panel::before {
+            right: -100px;
+        }
+        .right-panel::before {
+            left: -100px;
+            transform: rotate(180deg);
+        }
+
+        .hud-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 5px #0f0;
+            margin-bottom: 15px;
+            border-bottom: 1px dashed rgba(0, 255, 0, 0.5);
+            padding-bottom: 10px;
             letter-spacing: 2px;
+        }
+
+        .hud-row {
+            margin: 8px 0;
+            font-size: 14px;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+        }
+        .hud-row span {
+            font-weight: bold;
+            color: #cfc;
+        }
+
+        .log-content {
+            font-size: 11px;
+            height: 300px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column-reverse;
+            color: rgba(0, 255, 0, 0.8);
+            line-height: 1.6;
+            text-shadow: none;
+            border-top: 1px solid rgba(0,255,0,0.2);
+            padding-top: 10px;
+        }
+
+        .hud-graph {
+            margin-top: 15px;
+            opacity: 0.7;
+        }
+        .hud-graph .bar {
+            height: 6px;
+            background: linear-gradient(90deg, transparent, #0f0);
+            margin: 6px 0;
+            width: 100%;
+            box-shadow: 0 0 5px #0f0;
+        }
+
+        .hud-grid {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 0, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+        }
+
+        .blink-fast { animation: blinker 0.2s infinite alternate; }
+        @keyframes blinker { from { opacity: 1; } to { opacity: 0.3; } }
+
+        @media (max-width: 1400px) {
+            .hud-overlay { display: none; }
         }
     </style>
 </head>
 <body>
+    <div class="hud-overlay">
+        <div class="hud-panel left-panel">
+            <div class="hud-title">SYSTEM STATUS</div>
+            <div class="hud-row">ENGINE: <span id="hud-engine">NORMAL</span></div>
+            <div class="hud-row">CPU LOAD: <span id="hud-cpu">12</span>%</div>
+            <div class="hud-row">WEAPON: <span class="blink-fast" style="color:#0f0">READY</span></div>
+            <div class="hud-graph">
+                <div class="bar" style="width: 70%"></div>
+                <div class="bar" style="width: 40%"></div>
+                <div class="bar" style="width: 90%"></div>
+            </div>
+        </div>
+        <div class="hud-panel right-panel">
+            <div class="hud-title">BATTLE LOG</div>
+            <div id="battle-log" class="log-content">
+                > SYSTEM INITIALIZED...<br>
+                > PILOT CONNECTED...<br>
+                > WAITING FOR INPUT...
+            </div>
+        </div>
+    </div>
 
-    <div class="arcade-console">
-        <div class="ui-header">
-            <div>PLAYER 1</div>
-            <div>HIGH SCORE</div>
+    <div class="hud-grid"></div>
+    <div class="arcade-cabinet">
+        
+        <div class="cabinet-header">
+            <div class="speaker-grill"></div>
+            <div class="game-title">SPACE WAR</div>
+            <div class="speaker-grill"></div>
         </div>
 
-        <div class="monitor-frame">
+        <div class="monitor-bezel">
             <canvas id="myCanvas" width="1024" height="600"></canvas>
             
             <div class="scanlines"></div>
         </div>
 
-        <div class="ui-footer">
-            <div class="deco-text">INSERT COIN</div>
-            <div class="deco-btn btn-red" onclick="simulateKey('Space')"></div> 
-            <div class="deco-btn btn-blue" onclick="simulateKey('Enter')"></div>
+        <div class="control-panel">
+            <div class="screw tl"></div><div class="screw tr"></div>
+            <div class="screw bl"></div><div class="screw br"></div>
+
+            <div class="arcade-button-group">
+                <div class="arcade-btn btn-red" onclick="simulateKey('Space')">🚀</div>
+                <div class="label">ATTACK (Space)</div>
+            </div>
+
+            <div class="insert-coin">INSERT COIN</div>
+
+            <div class="arcade-button-group">
+                <div class="arcade-btn btn-blue" onclick="simulateKey('Enter')">▶</div>
+                <div class="label">START (Enter)</div>
+            </div>
         </div>
     </div>
 
     <script src="app.js"></script>
+
     <script>
         function simulateKey(keyType) {
-            let event;
             if (keyType === 'Enter') {
                 const e = new KeyboardEvent('keyup', { key: 'Enter', keyCode: 13 });
                 window.dispatchEvent(e);
@@ -154,6 +419,54 @@
                 }, 100);
             }
         }
+
+        const logBox = document.getElementById('battle-log');
+        const hudCpu = document.getElementById('hud-cpu');
+        const hudEngine = document.getElementById('hud-engine');
+
+        function addLog(text) {
+            const time = new Date().toLocaleTimeString().split(' ')[0];
+            const newLine = document.createElement('div');
+            newLine.innerHTML = `[${time}] ${text}`;
+            
+            if (logBox.children.length > 15) {
+                logBox.removeChild(logBox.lastChild);
+            }
+            
+            logBox.prepend(newLine);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === ' ') {
+                addLog("> FIRING MAIN WEAPON");
+                hudEngine.innerText = "MAX POWER";
+                hudEngine.style.color = "#fff";
+            } else if (e.key === 'ArrowLeft') {
+                addLog("> THRUSTERS: LEFT");
+            } else if (e.key === 'ArrowRight') {
+                addLog("> THRUSTERS: RIGHT");
+            } else if (e.key === 'Enter') {
+                addLog("> SYSTEM REBOOT COMMAND");
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.key === ' ') {
+                hudEngine.innerText = "NORMAL";
+                hudEngine.style.color = "inherit";
+            }
+        });
+
+        setInterval(() => {
+            const randomLoad = Math.floor(Math.random() * 30) + 10;
+            hudCpu.innerText = randomLoad;
+            
+            if (Math.random() > 0.95) {
+                addLog("> SCANNING SECTOR...");
+            }
+        }, 500);
+
+        setTimeout(() => addLog("> TACTICAL HUD ONLINE"), 1000);
     </script>
 </body>
 </html>
