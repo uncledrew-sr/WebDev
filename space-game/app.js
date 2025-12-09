@@ -2,9 +2,12 @@ let heroImg, enemyImg, laserImg, explosionImg, starBigImg, starSmallImg, lifeImg
 let canvas, ctx;
 let gameObjects = [];
 let hero;
+
 let gameLoopId;
 let bossIntervalId;
 let wingmanIntervalId;
+let lastTime = 0;
+let isGameRunning = false;
 
 const KEY_STATUS = {
     ArrowUp: false,
@@ -15,6 +18,7 @@ const KEY_STATUS = {
 
 const NUM_STARS = 100; 
 let stars = [];
+let particles = [];
 let currentStage = 1;
 
 const Messages = {
@@ -185,6 +189,35 @@ class Explosion extends GameObject {
     }
 }
 
+class Particle {
+    constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.color = color;
+        this.size = Math.random() * 3 + 2;
+        
+        this.vx = (Math.random() - 0.5) * 300;
+        this.vy = (Math.random() - 0.5) * 300;
+        
+        this.life = 1.0;
+    }
+
+    update(dt) {
+        this.x += this.vx * dt;
+        this.y += this.vy * dt;
+        
+        this.life -= dt * 2.0; 
+    }
+
+    draw(ctx) {
+        ctx.save();
+        ctx.globalAlpha = this.life;
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.x, this.y, this.size, this.size);
+        ctx.restore();
+    }
+}
+
 function intersectRect(r1, r2) {
     return !(
         r2.left > r1.right ||
@@ -284,9 +317,9 @@ function drawStars(ctx) {
     });
 }
 
-function updateStars() {
+function updateStars(dt) {
     stars.forEach(star => {
-        star.y += star.speed;
+        star.y += star.speed * 30 * dt;
 
         if (star.y > canvas.height) {
             star.y = 0;
@@ -308,35 +341,35 @@ function drawGameObjects(ctx) {
     gameObjects.forEach(go => go.draw(ctx));
 }
 
-function updateGameObjects() {
-    const speed = 20;
+function updateGameObjects(dt) {
+    const speed = 200;
 
     if (hero) {
         if (KEY_STATUS.ArrowUp) {
-            hero.y -= speed;
+            hero.y -= speed * dt;
         }
         if (KEY_STATUS.ArrowDown) {
-            hero.y += speed;
+            hero.y += speed * dt;
         }
         if (KEY_STATUS.ArrowLeft) {
-            hero.x -= speed;
+            hero.x -= speed * dt;
         }
         if (KEY_STATUS.ArrowRight) {
-            hero.x += speed;
+            hero.x += speed * dt;
         }
     }
 
     gameObjects.forEach(go => {
         if (go.type === 'Enemy' || go.type === 'Boss') {
-            go.y += 5;
+            go.y += 50 * dt;
             if (go.y > canvas.height) { 
                 go.dead = true;
             }
         } else if (go.type === 'Laser' || go.type === 'BossLaser') {
-            let laserSpeed = (go.type === 'BossLaser') ? 10 : 
-                             (go instanceof SmallLaser) ? 20 : 15;
+            let laserSpeed = (go.type === 'BossLaser') ? 100 : 
+                             (go instanceof SmallLaser) ? 200 : 150;
 
-            go.y += (go.type === 'BossLaser') ? laserSpeed : -laserSpeed;
+            go.y += (go.type === 'BossLaser') ? laserSpeed * dt : -laserSpeed * dt;
             
             if (go.y < 0 || go.y > canvas.height) {
                 go.dead = true;
@@ -397,6 +430,21 @@ function drawLife() {
     }
 }
 
+function createExplosionParticles(x, y, color) {
+    for (let i = 0; i < 30; i++) {
+        particles.push(new Particle(x, y, color));
+    }
+}
+
+function updateParticles(dt) {
+    particles.forEach(p => p.update(dt));
+    particles = particles.filter(p => p.life > 0);
+}
+
+function drawParticles(ctx) {
+    particles.forEach(p => p.draw(ctx));
+}
+
 function displayMessage (message, color = "red") {
     ctx.font = "30px Arial";
     ctx.fillStyle = color;
@@ -405,7 +453,9 @@ function displayMessage (message, color = "red") {
 }
 
 function endGame (win) {
-    clearInterval (gameLoopId);
+    isGameRunning = false;
+    cancelAnimationFrame(gameLoopId);
+    
     setTimeout(() => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = "black";
@@ -426,7 +476,7 @@ function endGame (win) {
 
 function resetGame() {
     if (gameLoopId) {
-        clearInterval(gameLoopId); 
+        cancelAnimationFrame(gameLoopId); 
     }
 
     if (bossIntervalId) clearInterval(bossIntervalId);
@@ -442,21 +492,37 @@ function resetGame() {
 
     initGame();
 
-    gameLoopId = setInterval(() => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "black";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        updateStars();
-        drawStars(ctx);
-        updateGameObjects();
-        drawGameObjects(ctx);
-        drawWingmen(ctx);
-        
-        drawPoints();
-        drawLife();
+    isGameRunning = true;
+    lastTime = performance.now(); 
+    gameLoopId = requestAnimationFrame(gameLoop);
+}
 
-    }, 100);
+function gameLoop(timestamp) {
+    if (!isGameRunning) return;
+
+    let dt = (timestamp - lastTime) / 1000;
+    if (isNaN(dt)) dt = 0;
+    lastTime = timestamp;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    updateStars(dt);
+    drawStars(ctx); 
+
+    updateGameObjects(dt);
+
+    updateParticles(dt); 
+    drawParticles(ctx);
+
+    drawGameObjects(ctx);
+    drawWingmen(ctx);
+
+    drawPoints();
+    drawLife();
+
+    gameLoopId = requestAnimationFrame(gameLoop);
 }
 
 function isHeroDead() {
@@ -478,9 +544,12 @@ function initGame() {
         first.dead = true;
         hero.incrementPoints();
 
-        const explosionX = second.x + second.width / 2 - 50; 
-        const explosionY = second.y + second.height / 2 - 50;
-        gameObjects.push(new Explosion(explosionX, explosionY));
+        const explosionX = second.x + second.width / 2;
+        const explosionY = second.y + second.height / 2;
+        gameObjects.push(new Explosion(explosionX - 50, explosionY - 50));
+
+        let explosionColor = second.type === 'Boss' ? 'yellow' : 'orange';
+        createExplosionParticles(explosionX, explosionY, explosionColor);
 
         if (second.type === 'Boss') {
             second.takeDamage(100); 
@@ -497,17 +566,6 @@ function initGame() {
                  }
             }
         }
-
-        bossIntervalId = setInterval(() => {
-            const boss = gameObjects.find(go => go.type === 'Boss' && !go.dead);
-            if (boss) {
-                gameObjects.push(new BossLaser(boss.x + boss.width / 2 - 7.5, boss.y + boss.height));
-            }
-        }, 1500);
-
-        wingmanIntervalId = setInterval(() => {
-            if (!hero) return;
-        }, 1000);
     });
 
     eventEmitter.on(Messages.COLLISION_ENEMY_HERO, (msg, { enemy }) => {
@@ -529,8 +587,15 @@ function initGame() {
         resetGame();
     });
 
-    setInterval(() => {
-        if (!hero) return;
+    bossIntervalId = setInterval(() => {
+        const boss = gameObjects.find(go => go.type === 'Boss' && !go.dead);
+        if (boss) {
+            gameObjects.push(new BossLaser(boss.x + boss.width / 2 - 7.5, boss.y + boss.height));
+        }
+    }, 1500);
+
+    wingmanIntervalId = setInterval(() => {
+        if (!hero || hero.dead) return;
 
         const smallWidth = hero.width * 0.5;
         const smallHeight = hero.height * 0.5;
@@ -589,22 +654,9 @@ window.onload = async() => {
     initGame();
     startStage(1);
 
-    gameLoopId = setInterval(() => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      ctx.fillStyle = 'black';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
-      updateStars(); 
-      drawStars(ctx); 
-
-      updateGameObjects();
-      drawGameObjects(ctx);
-      drawWingmen(ctx);
-
-      drawPoints();
-      drawLife();
-    }, 100);
+    isGameRunning = true;
+    lastTime = performance.now();
+    gameLoopId = requestAnimationFrame(gameLoop);
 };
 
 window.addEventListener('keydown', function (e) {
